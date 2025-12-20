@@ -15,7 +15,7 @@ interface ChatMessage {
   templateUrl: './chat.component.html',
   standalone: true,
   styleUrls: ['./chat.component.css'],
-  imports: [CommonModule, FormsModule] // ✅ essentiel pour ngIf, ngFor et ngModel
+  imports: [CommonModule, FormsModule]
 })
 export class ChatComponent implements OnInit {
 
