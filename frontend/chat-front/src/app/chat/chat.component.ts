@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';  // pour *ngIf et *ngFor
+import { FormsModule } from '@angular/forms';    // pour [(ngModel)]
 import * as SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
 
@@ -11,12 +13,14 @@ interface ChatMessage {
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
+  standalone: true,
+  styleUrls: ['./chat.component.css'],
+  imports: [CommonModule, FormsModule] // ✅ essentiel pour ngIf, ngFor et ngModel
 })
 export class ChatComponent implements OnInit {
 
-  username = '';
-  messageContent = '';
+  username: string = '';
+  messageContent: string = '';
   messages: ChatMessage[] = [];
   connected = false;
   stompClient: Client | null = null;
@@ -41,23 +45,21 @@ export class ChatComponent implements OnInit {
     this.stompClient.onConnect = () => {
       this.connected = true;
 
-      // s'abonner au topic
       this.stompClient?.subscribe('/chat/public', (msg: IMessage) => {
         const payload = JSON.parse(msg.body);
         this.messages.push(payload);
         setTimeout(() => this.scrollToBottom(), 0);
       });
 
-      // envoyer le message JOIN
       this.sendMessage({ sender: this.username, type: 'JOIN' });
     };
 
-    this.stompClient.onStompError = (frame) => {
+    this.stompClient.onStompError = (frame: any) => {
       console.error('Broker error:', frame);
       alert('Impossible de se connecter au serveur WebSocket.');
     };
 
-    this.stompClient.activate(); // activation
+    this.stompClient.activate();
   }
 
   sendMessage(message?: Partial<ChatMessage>): void {
