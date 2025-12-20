@@ -22,12 +22,14 @@ public class WebSocketEventListener {
 
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String username = (String) headerAccessor.getSessionAttributes().get("username");
+
         if (username != null) {
             System.out.println("User disconnected: " + username);
 
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(MessageType.LEAVE);
             chatMessage.setSender(username);
+
             messagingTemplate.convertAndSend("/chat/public", chatMessage);
         }
     }

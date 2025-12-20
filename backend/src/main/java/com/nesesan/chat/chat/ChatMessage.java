@@ -2,11 +2,11 @@ package com.nesesan.chat.chat;
 
 public class ChatMessage {
 
-    private String content;
-    private String sender;
-    private MessageType type;
+    private String content;   // Contenu du message
+    private String sender;    // Nom de l'utilisateur
+    private MessageType type; // Type du message (CHAT, JOIN, LEAVE)
 
-    public ChatMessage() {}
+    public ChatMessage() {} // Constructeur vide pour Jackson
 
     public ChatMessage(String content, String sender, MessageType type) {
         this.content = content;
