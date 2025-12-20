@@ -8,52 +8,28 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-/**
- * Cette classe écoute les événements WebSocket liés au cycle de vie des sessions
- * (ici : la déconnexion d’un utilisateur).
- */
-@Component // Indique à Spring que cette classe est un bean géré par le conteneur
+@Component
 public class WebSocketEventListener {
 
-    /**
-     * Permet d'envoyer des messages via STOMP aux clients WebSocket
-     */
     private final SimpMessageSendingOperations messagingTemplate;
 
-    /**
-     * Injection du messagingTemplate par Spring
-     */
     public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
-    /**
-     * Méthode appelée automatiquement par Spring
-     * lorsqu’un client se déconnecte du WebSocket
-     */
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
 
-        // Permet d'accéder aux headers STOMP et aux attributs de session
-        StompHeaderAccessor headerAccessor =
-                StompHeaderAccessor.wrap(event.getMessage());
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        String username = (String) headerAccessor.getSessionAttributes().get("username");
 
-        // Récupération du nom d'utilisateur stocké dans la session WebSocket
-        String username = (String)
-                headerAccessor.getSessionAttributes().get("username");
-
-        // Vérifie que l'utilisateur existe bien
         if (username != null) {
-
-            // Log côté serveur
             System.out.println("User disconnected: " + username);
 
-            // Création d'un message de chat indiquant que l'utilisateur quitte
             ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(MessageType.LEAVE); // Type : départ du chat
-            chatMessage.setSender(username);        // Utilisateur concerné
+            chatMessage.setType(MessageType.LEAVE);
+            chatMessage.setSender(username);
 
-            // Envoi du message à tous les clients abonnés au topic public
             messagingTemplate.convertAndSend("/chat/public", chatMessage);
         }
     }
