@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';  // pour *ngIf et *ngFor
-import { FormsModule } from '@angular/forms';    // pour [(ngModel)]
-import * as SockJS from 'sockjs-client';
-import { Client, IMessage } from '@stomp/stompjs';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import {WebsocketService} from "../services/websocket.service";
 
 interface ChatMessage {
   sender: string;
@@ -23,7 +22,6 @@ export class ChatComponent implements OnInit {
   messageContent: string = '';
   messages: ChatMessage[] = [];
   connected = false;
-  stompClient: Client | null = null;
 
   colors: string[] = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -32,50 +30,20 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  constructor(private wsService: WebsocketService) {}
+
   connect(): void {
     if (!this.username.trim()) return;
 
-    const socket = new SockJS('http://localhost:8080/wss');
-    this.stompClient = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
-      debug: () => {}
+    this.wsService.connect(this.username, (msg) => {
+      this.messages.push(msg);
+      setTimeout(() => this.scrollToBottom(), 0);
     });
-
-    this.stompClient.onConnect = () => {
-      this.connected = true;
-
-      this.stompClient?.subscribe('/chat/public', (msg: IMessage) => {
-        const payload = JSON.parse(msg.body);
-        this.messages.push(payload);
-        setTimeout(() => this.scrollToBottom(), 0);
-      });
-
-      this.sendMessage({ sender: this.username, type: 'JOIN' });
-    };
-
-    this.stompClient.onStompError = (frame: any) => {
-      console.error('Broker error:', frame);
-      alert('Impossible de se connecter au serveur WebSocket.');
-    };
-
-    this.stompClient.activate();
   }
 
-  sendMessage(message?: Partial<ChatMessage>): void {
-    if (!this.stompClient) return;
 
-    const chatMessage: Partial<ChatMessage> = message || {
-      sender: this.username,
-      content: this.messageContent,
-      type: 'CHAT'
-    };
-
-    this.stompClient.publish({
-      destination: '/app/chat.sendMessage',
-      body: JSON.stringify(chatMessage)
-    });
-
+  sendMessage(): void {
+    this.wsService.sendMessage(this.username, this.messageContent);
     this.messageContent = '';
   }
 
