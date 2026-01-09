@@ -1,10 +1,11 @@
 # projet_OC13 – POC Chat Temps Réel
 
 ## Description
+Ce projet est un Proof of Concept (POC) dont l’objectif est de démontrer la mise en place
+d’un chat temps réel simple entre un frontend Angular et un backend Java Spring Boot via WebSocket.
 
-Ce projet est un **Proof of Concept (POC)** dont l’objectif est de démontrer la mise en place d’un **chat temps réel simple** entre un frontend Angular et un backend Java Spring Boot via **WebSocket**.
-
-Le périmètre du projet est volontairement limité : il vise uniquement à **valider la communication temps réel frontend ↔ backend**
+Le périmètre du projet est volontairement limité : il vise uniquement à valider la communication
+temps réel frontend ↔ backend.
 
 ---
 
@@ -18,37 +19,43 @@ Le périmètre du projet est volontairement limité : il vise uniquement à **va
 
 ### Frontend
 - Angular 14
-- RxJS
 - TypeScript
-- WebSocket natif
+- RxJS
+- WebSocket (STOMP)
 
 ---
 
 ## Prérequis
-
 - Java 17 ou supérieur
-- Maven
-- Node.js
-- Angular CLI (v14)
+- Maven 3+
+- Node.js 18+
+- Angular CLI v14
 
 ---
+## Base de données
 
+Le script SQL minimal pour le POC se trouve dans `backend/db/init.sql`.  
+Il contient uniquement les tables nécessaires pour le chat : `user`, `conversation` et `message`.
+
+Pour ce POC, **les messages du chat sont stockés uniquement en mémoire** et aucune table n’est réellement utilisée.  
+Le script est fourni pour démontrer la structure et permettre une évolution future vers une vraie persistance.
+
+---
 ## Démarrage du projet
 
 ### 1. Lancer le backend
+Depuis le dossier `backend` :
 
-Depuis le dossier **backend** :
-
-
+```bash
 mvn clean install
 mvn spring-boot:run
+```
 
-Depuis le dossier **FrontEnd** :
-Lancer le frontend
+### 1. Lancer le frontend
+Depuis le dossier `chat-front` :
 
-### 2. Lancer le backend
-
-Depuis le dossier **FrontEnd** :
-
+```bash
 npm install
+npm install @stomp/stompjs
 npm start
+```
