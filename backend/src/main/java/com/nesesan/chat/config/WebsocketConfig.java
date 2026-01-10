@@ -23,6 +23,6 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
         // Préfixe pour les messages envoyés par le client
         registry.setApplicationDestinationPrefixes("/app");
         // Broker simple pour diffuser les messages aux clients abonnés
-        registry.enableSimpleBroker("/chat");
+        registry.enableSimpleBroker("/topic");
     }
 }

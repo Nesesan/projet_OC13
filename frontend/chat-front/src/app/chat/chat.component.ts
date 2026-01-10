@@ -36,6 +36,7 @@ export class ChatComponent implements OnInit {
     if (!this.username.trim()) return;
 
     this.wsService.connect(this.username, (msg) => {
+      this.connected = true;
       this.messages.push(msg);
       setTimeout(() => this.scrollToBottom(), 0);
     });
