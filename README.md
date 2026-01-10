@@ -15,7 +15,6 @@ temps réel frontend ↔ backend.
 - Java 17
 - Spring Boot
 - Spring WebSocket
-- Spring Data MongoDB
 - Maven
 
 ### Frontend
