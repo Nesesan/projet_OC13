@@ -15,6 +15,7 @@ temps réel frontend ↔ backend.
 - Java 17
 - Spring Boot
 - Spring WebSocket
+- Spring Data MongoDB
 - Maven
 
 ### Frontend
@@ -30,12 +31,12 @@ temps réel frontend ↔ backend.
 - Maven 3+
 - Node.js 18+
 - Angular CLI v14
+- MongoDB (local ou accessible via URI `mongodb://localhost:27017`)
 
 ---
 ## Base de données
 
-Le script SQL minimal pour le POC se trouve dans `backend/db/init.sql`.  
-Il contient uniquement les tables nécessaires pour le chat : `user`, `conversation` et `message`.
+Le script SQL des différentes tables pour le projet global se trouve dans `backend/db/init.sql`.
 
 Pour ce POC, **les messages du chat sont stockés uniquement en mémoire** et aucune table n’est réellement utilisée.  
 Le script est fourni pour démontrer la structure et permettre une évolution future vers une vraie persistance.
